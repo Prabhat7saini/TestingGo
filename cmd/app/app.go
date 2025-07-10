@@ -3,6 +3,7 @@ package app
 import (
 	"fmt"
 	"net/http"
+	"time"
 
 	"github.com/gin-gonic/gin"
 
@@ -62,8 +63,11 @@ func (a *App) initialize() {
 
 	// Init HTTP server
 	a.server = &http.Server{
-		Addr:    fmt.Sprintf(":%d", a.cfg.Port),
-		Handler: a.router,
+		Addr:         fmt.Sprintf(":%d", a.cfg.Port),
+		Handler:      a.router,
+		ReadTimeout:  time.Second * 60,
+		WriteTimeout: time.Second * 60,
+		IdleTimeout:  time.Second * 60,
 	}
 }
 
