@@ -22,6 +22,7 @@ var (
 // Get singleton database connection
 func ConnectDb(cfg *config.Env) (*gorm.DB, error) {
 	once.Do(func() {
+		fmt.Println("******************************************************************")
 		dsn := fmt.Sprintf(
 			"host=%s user=%s password=%s dbname=%s port=%d sslmode=disable",
 			cfg.DB.Host, cfg.DB.User, cfg.DB.Password,
@@ -35,6 +36,7 @@ func ConnectDb(cfg *config.Env) (*gorm.DB, error) {
 			logLevel = logger.Silent
 		}
 
+		fmt.Println(`1111111111111111111111111111111111111111111111111111111`)
 		gormLogger := logger.New(
 			log.New(os.Stdout, "\r\n", log.LstdFlags),
 			logger.Config{
@@ -44,7 +46,7 @@ func ConnectDb(cfg *config.Env) (*gorm.DB, error) {
 				Colorful:                  true,
 			},
 		)
-
+fmt.Println(`22222222222222222222222222222222222222222`)
 		db, err := gorm.Open(postgres.Open(dsn), &gorm.Config{
 			Logger: gormLogger,
 		})
@@ -52,17 +54,17 @@ func ConnectDb(cfg *config.Env) (*gorm.DB, error) {
 			initErr = fmt.Errorf("failed to connect to database: %w", err)
 			return
 		}
-
+fmt.Println(`333333333333333333333333333333333333333333333333`)
 		sqlDB, err := db.DB()
 		if err != nil {
 			initErr = fmt.Errorf("failed to get underlying sql.DB: %w", err)
 			return
 		}
-
+fmt.Println(`44444444444444444444444444444444444444444444444`)
 		sqlDB.SetMaxIdleConns(cfg.DB.MaxIdleConnection)
 		sqlDB.SetMaxOpenConns(cfg.DB.MaxOpenConnection)
 		sqlDB.SetConnMaxLifetime(time.Duration(cfg.DB.ConnectionLifeTimeMinute) * time.Minute)
-
+		fmt.Println("string the datbase")
 		instance = db
 	})
 

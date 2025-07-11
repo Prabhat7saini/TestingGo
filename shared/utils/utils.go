@@ -1,8 +1,12 @@
 package utils
 
-import "golang.org/x/crypto/bcrypt"
+import (
+	"gitlab.com/truemeds-dev-team/truemeds-dev-doctor/truemeds-dev-service/doctorportal-auth-service/shared/constants"
+	"gitlab.com/truemeds-dev-team/truemeds-dev-doctor/truemeds-dev-service/doctorportal-auth-service/shared/constants/exception"
+)
 
-func CompareHashAndPassword(hashedPassword string, password string) bool {
-	err := bcrypt.CompareHashAndPassword([]byte(hashedPassword), []byte(password))
-	return err == nil
+func ServiceError[T any](code exception.ErrorCode) constants.ServiceOutput[T] {
+	return constants.ServiceOutput[T]{
+		Exception: exception.GetException(code),
+	}
 }

@@ -95,4 +95,4 @@
 // 		mockRepo.AssertExpectations(t)
 // 	})
 // }
-package service
+package authservice

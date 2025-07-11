@@ -2,45 +2,49 @@ package userloginservice
 
 import (
 	"context"
-	"errors"
-	"fmt"
+	// "net/http"
 
-	"gitlab.com/truemeds-dev-team/truemeds-dev-doctor/truemeds-dev-service/doctorportal-auth-service/internal/auth/models"
+	// "gitlab.com/truemeds-dev-team/truemeds-dev-doctor/truemeds-dev-service/doctorportal-auth-service/internal/auth/models"
 	userloginrepository "gitlab.com/truemeds-dev-team/truemeds-dev-doctor/truemeds-dev-service/doctorportal-auth-service/internal/auth/repository/user_login"
-	"gitlab.com/truemeds-dev-team/truemeds-dev-doctor/truemeds-dev-service/doctorportal-auth-service/internal/auth/v1/dto"
-	"gitlab.com/truemeds-dev-team/truemeds-dev-doctor/truemeds-dev-service/doctorportal-auth-service/internal/service"
-	// service "gitlab.com/truemeds-dev-team/truemeds-dev-doctor/truemeds-dev-service/doctorportal-auth-service/internal/service"
+	// "gitlab.com/truemeds-dev-team/truemeds-dev-doctor/truemeds-dev-service/doctorportal-auth-service/shared/constants"
+	// "gitlab.com/truemeds-dev-team/truemeds-dev-doctor/truemeds-dev-service/doctorportal-auth-service/shared/constants/exception"
+	// "gitlab.com/truemeds-dev-team/truemeds-dev-doctor/truemeds-dev-service/doctorportal-auth-service/shared/utils"
+	// "go.uber.org/zap"
+
+	// "gitlab.com/truemeds-dev-team/truemeds-dev-doctor/truemeds-dev-service/doctorportal-auth-service/internal/auth/v1/dto"
+	authserviceaccess "gitlab.com/truemeds-dev-team/truemeds-dev-doctor/truemeds-dev-service/doctorportal-auth-service/internal/auth/v1/service"
+	// "gorm.io/gorm"
 )
 
-// ---------- Service contract ----------
-
-type UserLoginService interface {
-	GetUser(ctx context.Context, payload *dto.LoginDto) (models.UserLogin, error)
+type UserLoginServiceMethods interface {
+	GetUserByEmail(ctx context.Context, email string, password string) (IGetUserByEmailResponse, error)
+	// Login(ctx context.Context, userLogin *models.UserLogin)
 }
-
-// ---------- Concrete implementation ----------
 
 type userLoginService struct {
 	repo   userloginrepository.UserLoginRepositoryMethods
-	access service.ServiceAccess
+	access *authserviceaccess.AuthServiceAccess
 }
 
-// New is a constructor that wires the repository into the service.
-func NewUserLoginService(repo userloginrepository.UserLoginRepositoryMethods) UserLoginService {
-	return &userLoginService{repo: repo}
-}
-
-// GetUser validates the input and delegates to the repository.
-// Replace the repo call with your real implementation.
-func (s *userLoginService) GetUser(
-	ctx context.Context,
-	payload *dto.LoginDto,
-) (models.UserLogin, error) {
-
-	if payload == nil {
-		return models.UserLogin{}, fmt.Errorf("payload must not be nil")
+func NewUserLoginService(
+	repo userloginrepository.UserLoginRepositoryMethods,
+	access *authserviceaccess.AuthServiceAccess,
+) UserLoginServiceMethods {
+	return &userLoginService{
+		repo:   repo,
+		access: access,
 	}
+}
 
-	// Example repository call (adjust to your repo’s signature):
-	return models.UserLogin{}, errors.New("login service not implemented yet")
+func (s *userLoginService) GetUserByEmail(
+	ctx context.Context,
+	email string,
+	password string,
+) (IGetUserByEmailResponse, error) {
+
+	user, err := s.repo.FindUserByFields(ctx, map[string]interface{}{"email": email}, "id", "role_id","password_hash")
+	if err != nil {
+		return IGetUserByEmailResponse{} ,err
+	}
+	return IGetUserByEmailResponse{Email: user.Email,Password: user.PasswordHash},nil
 }

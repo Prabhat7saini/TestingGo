@@ -11,9 +11,9 @@ import (
 type UserLogin struct {
 	ID           int            `gorm:"primaryKey;column:id"`
 	UUID         uuid.UUID      `gorm:"type:uuid;default:uuid_generate_v4();not null"`
-	Name         *string        `gorm:"type:varchar(100)"`
-	Email        string         `gorm:"type:varchar(255);not null"`
-	PasswordHash string         `gorm:"type:text;not null"`
+	Name         *string        `gorm:"column:name;type:varchar(100)"`                            
+	Email        string         `gorm:"column:email;type:varchar(255);not null;uniqueIndex"`      
+	PasswordHash string         `gorm:"column:password_hash;type:text;not null"`
 	RoleID       *int           `gorm:"column:role_id"`
 	IsActive     bool           `gorm:"column:is_active;not null;default:true"`
 	IsBlocked    bool           `gorm:"column:is_blocked;not null;default:false"`
