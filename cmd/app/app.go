@@ -8,7 +8,8 @@ import (
 	"github.com/gin-gonic/gin"
 
 	"gitlab.com/truemeds-dev-team/truemeds-dev-doctor/truemeds-dev-service/doctorportal-auth-service/config"
-	"gitlab.com/truemeds-dev-team/truemeds-dev-doctor/truemeds-dev-service/doctorportal-auth-service/internal/repository"
+	"gitlab.com/truemeds-dev-team/truemeds-dev-doctor/truemeds-dev-service/doctorportal-auth-service/internal/intitalizer"
+	// "gitlab.com/truemeds-dev-team/truemeds-dev-doctor/truemeds-dev-service/doctorportal-auth-service/internal/repository"
 	"gitlab.com/truemeds-dev-team/truemeds-dev-doctor/truemeds-dev-service/doctorportal-auth-service/shared/clients/db"
 	sharedRedis "gitlab.com/truemeds-dev-team/truemeds-dev-doctor/truemeds-dev-service/doctorportal-auth-service/shared/clients/redis"
 	"go.uber.org/zap"
@@ -22,7 +23,7 @@ type App struct {
 	db     *gorm.DB
 	redis  sharedRedis.Client
 	log    *zap.Logger
-	repo   *repository.BaseRepository
+	repo   *intitalizer.BaseRepository
 	// service *service.Services
 }
 
@@ -51,8 +52,8 @@ func (a *App) initialize() {
 	a.redis = redisConn
 
 	// Init Repository Access and Factory
-	access := repository.NewRepositoryAccess(a.db, a.redis, a.log, a.cfg)
-	a.repo = repository.NewBaseRepository(access)
+	// access := repository.NewRepositoryAccess(a.db, a.redis, a.log, a.cfg)
+	a.repo = intitalizer.NewBaseRepository(a.db, a.redis, a.log, a.cfg)
 
 	// // Init Services
 	// a.service = service.NewServices(a.repo, a.log, a.cfg)

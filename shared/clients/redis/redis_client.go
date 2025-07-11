@@ -30,7 +30,7 @@ func InitRedis(cfg *config.Env) (Client, error) {
 
 		if pingErr := rdb.Ping(ctx).Err(); pingErr != nil {
 			err = fmt.Errorf("failed to connect to Redis at %s: %w", cfg.Redis.Addr, pingErr)
-			return
+			return 
 		}
 
 		instance = &redisClient{rdb: rdb}
